@@ -21,8 +21,8 @@
                 </p>
             </td>
             <td>
-                <p>🇪🇸 DAM (Desarrollo de Aplicaciones <br>Multi Plataforma)</p>
-                <p>🌍 Cross-Platform Application<br>Development</p>
+                <p>🇪🇸 DAM (Desarrollo de Aplicaciones Multi Plataforma)</p>
+                <p>🌍 Cross-Platform Application Development</p>
             </td>
         </tr>
         <tr>
