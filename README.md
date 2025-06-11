@@ -149,8 +149,10 @@
             <td>🤚 Backend:</td>
             <td>
                 <p>
-                    <a href="https://www.w3schools.com/c/c_intro.php"><img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/c-program-icon.svg" alt="C" title="C" width="50" height="50"/></a>
                     <a href="https://www.java.com/"><img src="https://www.svgrepo.com/download/452234/java.svg" alt="Java" title="Java" width="50" height="50"/></a>
+                    <a href="https://www.w3schools.com/c/c_intro.php"><img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/c-program-icon.svg" alt="C" title="C" width="50" height="50"/></a>
+                    <a href="https://www.w3schools.com/cpp/"><img src="https://upload.wikimedia.org/wikipedia/commons/1/18/ISO_C%2B%2B_Logo.svg" alt="C++" title="C++" width="50" height="50"/></a>
+                    <br />
                     <a href="https://www.php.net/"><img src="https://www.svgrepo.com/download/452088/php.svg" alt="PHP" title="PHP" width="50" height="50"/></a>
                 </p>
             </td>
@@ -160,6 +162,7 @@
             <td>
                 <p>
                     <a href="https://laravel.com/"><img src="https://www.svgrepo.com/download/353985/laravel.svg" alt="Laravel" title="Laravel" width="50" height="50"/></a>
+                    <a href="https://hibernate.org/"><img src="https://www.vectorlogo.zone/logos/hibernate/hibernate-icon.svg" alt="Hibernate" title="Hibernate" width="50" height="50"/></a>
                 </p>
             </td>
         </tr>
@@ -198,7 +201,7 @@
             </td>
         </tr>
         <tr>
-            <td>☕ Versions:</td>
+            <td>☕ Version <br /> control:</td>
             <td>
                 <p>
                     <a href="https://git-scm.com/"><img src="https://www.svgrepo.com/download/452210/git.svg" alt="Git" title="Git" width="50" height="50"/></a>
