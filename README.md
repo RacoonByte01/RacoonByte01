@@ -130,7 +130,7 @@
             <td>📜 Scripting:</td>
             <td>
                 <p>
-                    <a href="https://www.python.org/"><img src="https://www.svgrepo.com/download/452091/python.svg" alt="Python" title="Python" width="50" height="50"/></a>
+                    <a href="https://www.python.org/"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python" title="Python" width="50" height="50"/></a>
                     <a href="https://www.gnu.org/software/bash/"><img src="https://bashlogo.com/img/symbol/svg/full_colored_light.svg" alt="GNU Bash" title="GNU Bash" width="50" height="50"/></a>
                 </p>
             </td>
@@ -139,7 +139,7 @@
             <td>✋ Frontend:</td>
             <td>
                 <p>
-                    <a href="https://www.w3schools.com/html/"><img src="https://www.svgrepo.com/download/452228/html-5.svg" alt="HTML5" title="HTML5" width="50" height="50"/></a>
+                    <a href="https://www.w3schools.com/html/"><img src="https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg" alt="HTML5" title="HTML5" width="50" height="50"/></a>
                     <a href="https://www.w3schools.com/css/"><img src="https://www.svgrepo.com/download/452185/css-3.svg" alt="CSS" title="CSS" width="50" height="50"/></a>
                     <a href="https://www.w3schools.com/js/"><img src="https://www.svgrepo.com/download/349419/javascript.svg" alt="JavaScript" title="JavaScript" width="50" height="50"/></a>
                 </p>
@@ -149,7 +149,7 @@
             <td>🤚 Backend:</td>
             <td>
                 <p>
-                    <a href="https://www.java.com/"><img src="https://www.svgrepo.com/download/452234/java.svg" alt="Java" title="Java" width="50" height="50"/></a>
+                    <a href="https://www.java.com/"><img src="https://www.vectorlogo.zone/logos/java/java-icon.svg" alt="Java" title="Java" width="50" height="50"/></a>
                     <a href="https://www.w3schools.com/c/c_intro.php"><img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/c-program-icon.svg" alt="C" title="C" width="50" height="50"/></a>
                     <a href="https://www.w3schools.com/cpp/"><img src="https://upload.wikimedia.org/wikipedia/commons/1/18/ISO_C%2B%2B_Logo.svg" alt="C++" title="C++" width="50" height="50"/></a>
                     <br />
@@ -170,11 +170,11 @@
             <td>💾 Data Save:</td>
             <td>
                 <p>
-                    <a href="https://www.sqlite.org/"><img src="https://www.svgrepo.com/download/374094/sqlite.svg" alt="SQLite" title="SQLite" width="50" height="50"/></a>
+                    <a href="https://www.sqlite.org/"><img src="https://upload.wikimedia.org/wikipedia/commons/9/97/Sqlite-square-icon.svg" alt="SQLite" title="SQLite" width="50" height="50"/></a>
                     <a href="https://www.w3schools.com/xml/xml_whatis.asp"><img src="https://upload.wikimedia.org/wikipedia/commons/2/2d/Extensible_Markup_Language_%28XML%29_logo.svg" alt="XML" title="XML" width="50" height="50"/></a>
                     <a href="https://www.json.org"><img src="https://www.svgrepo.com/download/473674/json.svg" alt="JSON" title="JSON" width="50" height="50"/></a>
                     <br>
-                    <a href="https://mariadb.org/"><img src="https://www.svgrepo.com/download/354037/mariadb-icon.svg" alt="MariaDB" title="MariaDB" width="50" height="50"/></a>
+                    <a href="https://mariadb.org/"><img src="https://mariadb.com/wp-content/uploads/2019/11/mariadb-logo-vert_black-transparent.png" alt="MariaDB" title="MariaDB" width="50" height="50"/></a>
                     <a href="https://www.mysql.com/"><img src="https://www.svgrepo.com/download/355133/mysql.svg" alt="MySQL" title="MySQL" width="50" height="50"/></a>
                     <a href="https://yaml.org/"><img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/Official_YAML_Logo.svg" alt="YAML" title="YAML" width="50" height="50"/></a>
                 </p>
@@ -195,7 +195,7 @@
             <td>
                 <p>
                     <a href="https://www.docker.com/"><img src="https://www.svgrepo.com/download/448221/docker.svg" alt="Docker" title="Docker" width="50" height="50"/></a>
-                    <a href="https://nginx.org/"><img src="https://www.svgrepo.com/download/373924/nginx.svg" alt="Nginx" title="Nginx" width="50" height="50"/></a>
+                    <a href="https://nginx.org/"><img src="https://www.vectorlogo.zone/logos/nginx/nginx-icon.svg" alt="Nginx" title="Nginx" width="50" height="50"/></a>
                     <a href="https://www.haproxy.org/"><img src="https://www.vectorlogo.zone/logos/haproxy/haproxy-icon.svg" alt="HAProxy" title="HAProxy" width="50" height="50"/></a>
                 </p>
             </td>
