@@ -172,9 +172,9 @@
                 <p>
                     <a href="https://www.sqlite.org/"><img src="https://upload.wikimedia.org/wikipedia/commons/9/97/Sqlite-square-icon.svg" alt="SQLite" title="SQLite" width="50" height="50"/></a>
                     <a href="https://www.w3schools.com/xml/xml_whatis.asp"><img src="https://upload.wikimedia.org/wikipedia/commons/2/2d/Extensible_Markup_Language_%28XML%29_logo.svg" alt="XML" title="XML" width="50" height="50"/></a>
-                    <a href="https://www.json.org"><img src="https://www.svgrepo.com/download/473674/json.svg" alt="JSON" title="JSON" width="50" height="50"/></a>
+                    <a href="https://www.json.org"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/JSON_vector_logo.svg" alt="JSON" title="JSON" width="50" height="50"/></a>
                     <br>
-                    <a href="https://mariadb.org/"><img src="https://mariadb.com/wp-content/uploads/2019/11/mariadb-logo-vert_black-transparent.png" alt="MariaDB" title="MariaDB" width="50" height="50"/></a>
+                    <a href="https://mariadb.org/"><img src="https://mariadb.com/wp-content/uploads/2019/11/mariadb-logo-vertical_white.svg" alt="MariaDB" title="MariaDB" width="50" height="50"/></a>
                     <a href="https://www.mysql.com/"><img src="https://www.svgrepo.com/download/355133/mysql.svg" alt="MySQL" title="MySQL" width="50" height="50"/></a>
                     <a href="https://yaml.org/"><img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/Official_YAML_Logo.svg" alt="YAML" title="YAML" width="50" height="50"/></a>
                 </p>
@@ -215,7 +215,7 @@
             <td>
                 <p>
                     <a href="https://neovim.io/"><img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Neovim-mark.svg" alt="Neovim" title="Neovim" width="50" height="50"/></a>
-                    <a href="https://vscodium.com/"><img src="https://vscodium.com/img/codium_cnl.svg" alt="VSCodium" title="VSCodium" width="50" height="50"/></a>
+                    <a href="https://vscodium.com/"><img src="https://github.com/VSCodium/icons/raw/main/icons/linux/nobg/blue1/paulo22s.png" alt="VSCodium" title="VSCodium" width="50" height="50"/></a>
                 </p>
             </td>
         </tr>
