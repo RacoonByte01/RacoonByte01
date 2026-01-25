@@ -127,11 +127,15 @@
 <table>
     <tbody>
         <tr>
-            <td>📜 Scripting:</td>
+            <td>🤚 Backend:</td>
             <td>
                 <p>
+                    <a href="https://www.java.com/"><img src="https://www.vectorlogo.zone/logos/java/java-icon.svg" alt="Java" title="Java" width="50" height="50"/></a>
                     <a href="https://www.python.org/"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python" title="Python" width="50" height="50"/></a>
-                    <a href="https://www.gnu.org/software/bash/"><img src="https://bashlogo.com/img/symbol/svg/full_colored_light.svg" alt="GNU Bash" title="GNU Bash" width="50" height="50"/></a>
+                    <a href="https://www.php.net/"><img src="https://www.svgrepo.com/download/452088/php.svg" alt="PHP" title="PHP" width="50" height="50"/></a>
+                    <br />
+                    <a href="https://www.w3schools.com/c/c_intro.php"><img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/c-program-icon.svg" alt="C" title="C" width="50" height="50"/></a>
+                    <a href="https://www.w3schools.com/cpp/"><img src="https://upload.wikimedia.org/wikipedia/commons/1/18/ISO_C%2B%2B_Logo.svg" alt="C++" title="C++" width="50" height="50"/></a>
                 </p>
             </td>
         </tr>
@@ -146,18 +150,6 @@
             </td>
         </tr>
         <tr>
-            <td>🤚 Backend:</td>
-            <td>
-                <p>
-                    <a href="https://www.java.com/"><img src="https://www.vectorlogo.zone/logos/java/java-icon.svg" alt="Java" title="Java" width="50" height="50"/></a>
-                    <a href="https://www.w3schools.com/c/c_intro.php"><img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/c-program-icon.svg" alt="C" title="C" width="50" height="50"/></a>
-                    <a href="https://www.w3schools.com/cpp/"><img src="https://upload.wikimedia.org/wikipedia/commons/1/18/ISO_C%2B%2B_Logo.svg" alt="C++" title="C++" width="50" height="50"/></a>
-                    <br />
-                    <a href="https://www.php.net/"><img src="https://www.svgrepo.com/download/452088/php.svg" alt="PHP" title="PHP" width="50" height="50"/></a>
-                </p>
-            </td>
-        </tr>
-        <tr>
             <td>🖼️ Frameworks:</td>
             <td>
                 <p>
@@ -167,7 +159,7 @@
             </td>
         </tr>
         <tr>
-            <td>💾 Data Save:</td>
+            <td>💾 DataBase:</td>
             <td>
                 <p>
                     <a href="https://www.sqlite.org/"><img src="https://upload.wikimedia.org/wikipedia/commons/9/97/Sqlite-square-icon.svg" alt="SQLite" title="SQLite" width="50" height="50"/></a>
@@ -181,12 +173,12 @@
             </td>
         </tr>
         <tr>
-            <td>🐧 OS:</td>
+            <td>☕ Version <br /> control:</td>
             <td>
                 <p>
-                    <a href="https://archlinux.org/"><img src="https://www.vectorlogo.zone/logos/archlinux/archlinux-icon.svg" alt="Arch Linux" title="Arch Linux" width="50" height="50"/></a>
-                    <a href="https://www.debian.org/"><img src="https://www.svgrepo.com/download/353640/debian.svg" alt="Debian" title="Debian" width="50" height="50"/></a>
-                    <a href="https://www.redhat.com/"><img src="https://www.svgrepo.com/download/354273/redhat-icon.svg" alt="RedHat" title="RedHat" width="50" height="50"/></a>
+                    <a href="https://git-scm.com/"><img src="https://www.svgrepo.com/download/452210/git.svg" alt="Git" title="Git" width="50" height="50"/></a>
+                    <a href="https://github.com/RacoonByte01"><img src="https://www.svgrepo.com/download/512317/github-142.svg" alt="GitHub" title="GitHub" width="50" height="50"/></a>
+                    <a href="https://gitlab.com/RacoonByte01"><img src="https://images.ctfassets.net/xz1dnu24egyd/3FbNmZRES38q2Sk2EcoT7a/a290dc207a67cf779fc7c2456b177e9f/press-kit-icon.svg" alt="GitLab" title="GitLab" width="50" height="50"/></a>
                 </p>
             </td>
         </tr>
@@ -201,12 +193,12 @@
             </td>
         </tr>
         <tr>
-            <td>☕ Version <br /> control:</td>
+            <td>🐧 OS:</td>
             <td>
                 <p>
-                    <a href="https://git-scm.com/"><img src="https://www.svgrepo.com/download/452210/git.svg" alt="Git" title="Git" width="50" height="50"/></a>
-                    <a href="https://github.com/RacoonByte01"><img src="https://www.svgrepo.com/download/512317/github-142.svg" alt="GitHub" title="GitHub" width="50" height="50"/></a>
-                    <a href="https://gitlab.com/RacoonByte01"><img src="https://images.ctfassets.net/xz1dnu24egyd/3FbNmZRES38q2Sk2EcoT7a/a290dc207a67cf779fc7c2456b177e9f/press-kit-icon.svg" alt="GitLab" title="GitLab" width="50" height="50"/></a>
+                    <a href="https://archlinux.org/"><img src="https://www.vectorlogo.zone/logos/archlinux/archlinux-icon.svg" alt="Arch Linux" title="Arch Linux" width="50" height="50"/></a>
+                    <a href="https://www.debian.org/"><img src="https://www.svgrepo.com/download/353640/debian.svg" alt="Debian" title="Debian" width="50" height="50"/></a>
+                    <a href="https://www.redhat.com/"><img src="https://www.svgrepo.com/download/354273/redhat-icon.svg" alt="RedHat" title="RedHat" width="50" height="50"/></a>
                 </p>
             </td>
         </tr>
@@ -248,6 +240,7 @@
 <hr>
 
 <blockquote align="center">
+    <h3><a href="https://porfolio.20030821.xyz/">🌐 My profile web</a></h3>
     <h3>👤 Contact 📫</h3>
     <ul>
         <li>✉️ Email: <a href="mailto:javier.gonzalo.2003@gmail.com">javier.gonzalo.2003@gmail.com</a></li>
