@@ -150,15 +150,6 @@
             </td>
         </tr>
         <tr>
-            <td>🖼️ Frameworks:</td>
-            <td>
-                <p>
-                    <a href="https://laravel.com/"><img src="https://www.svgrepo.com/download/353985/laravel.svg" alt="Laravel" title="Laravel" width="50" height="50"/></a>
-                    <a href="https://hibernate.org/"><img src="https://www.vectorlogo.zone/logos/hibernate/hibernate-icon.svg" alt="Hibernate" title="Hibernate" width="50" height="50"/></a>
-                </p>
-            </td>
-        </tr>
-        <tr>
             <td>💾 DataBase:</td>
             <td>
                 <p>
@@ -179,6 +170,15 @@
                     <a href="https://git-scm.com/"><img src="https://www.svgrepo.com/download/452210/git.svg" alt="Git" title="Git" width="50" height="50"/></a>
                     <a href="https://github.com/RacoonByte01"><img src="https://www.svgrepo.com/download/512317/github-142.svg" alt="GitHub" title="GitHub" width="50" height="50"/></a>
                     <a href="https://gitlab.com/RacoonByte01"><img src="https://images.ctfassets.net/xz1dnu24egyd/3FbNmZRES38q2Sk2EcoT7a/a290dc207a67cf779fc7c2456b177e9f/press-kit-icon.svg" alt="GitLab" title="GitLab" width="50" height="50"/></a>
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td>🖼️ Frameworks:</td>
+            <td>
+                <p>
+                    <a href="https://laravel.com/"><img src="https://www.svgrepo.com/download/353985/laravel.svg" alt="Laravel" title="Laravel" width="50" height="50"/></a>
+                    <a href="https://hibernate.org/"><img src="https://www.vectorlogo.zone/logos/hibernate/hibernate-icon.svg" alt="Hibernate" title="Hibernate" width="50" height="50"/></a>
                 </p>
             </td>
         </tr>
