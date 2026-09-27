@@ -45,10 +45,9 @@ const STYLE = `<style>
 .l4{fill:#39d353}
 }</style>`;
 
-const LEVELS = 5;
 const FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif";
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const MONTH_WINDOW = 6;
 
 const LANG_COLORS = {
   c: '#555555',
@@ -79,11 +78,6 @@ const esc = (s) =>
 
 const num = (n) => Number(n || 0).toLocaleString('en-US');
 
-const longDate = (iso) => {
-  const [y, m, d] = iso.split('-').map(Number);
-  return `${WEEKDAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()]} ${d} ${MONTHS[m - 1]} ${y}`;
-};
-
 const card = (w, h, body) =>
   [
     `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" font-family="${FONT}">`,
@@ -113,9 +107,10 @@ async function graphql(query, variables) {
 }
 
 function languagesCard(langs) {
-  // 333 x 180 keeps the same rendering scale as the activity card at the
-  // widths the README uses, so both rows come out the same height.
-  const w = 333;
+  // 286 x 180 renders at the same scale as the activity card (643 x 180) at the
+  // widths the README uses, so both cards come out the same height and still fit
+  // side by side in the readme column.
+  const w = 286;
   const h = 180;
   const rowH = 26;
   const top = 40;
@@ -146,76 +141,97 @@ function languagesCard(langs) {
   return card(w, h, head + (langs.length ? rows : empty));
 }
 
-function activityCard(weeks, { currentStreak, longestStreak, totalContributions }) {
-  const cell = 9;
-  const step = 11;
-  const pad = 22;
-  const left = pad + 26; // gutter for the Mon/Wed/Fri labels
-  const top = 52;
-  const h = 180;
-  const firstWeekday = new Date(`${weeks[0].days[0].date}T00:00:00Z`).getUTCDay();
-  const cols = firstWeekday + weeks.length;
-  const w = left + (cols - 1) * step + cell + 14;
+// Contributions grouped into the last MONTH_WINDOW calendar months, current one
+// included (so the last bar is always partial). Everything the card shows is
+// summed from the daily counts, never from calendar.totalContributions, which
+// does not always match the sum of the days.
+function recentActivity(days, count) {
+  const now = new Date();
+  const year = now.getUTCFullYear();
+  const month = now.getUTCMonth();
+  const from = Date.UTC(year, month - (count - 1), 1);
 
-  const counts = weeks.flatMap((wk) => wk.days.map((d) => d.count));
-  const max = Math.max(1, ...counts);
-  const level = (c) => (c === 0 ? 0 : Math.min(4, Math.ceil((c / max) * 4)));
+  const inWindow = days.filter((d) => Date.parse(`${d.date}T00:00:00Z`) >= from);
 
-  let lastMonth = -1;
-  let squares = '';
-  let labels = '';
-
-  weeks.forEach((wk, wi) => {
-    const col = firstWeekday + wi;
-    const x = left + col * step;
-    const month = new Date(`${wk.days[0].date}T00:00:00Z`).getUTCMonth();
-    if (wi > 0 && month !== lastMonth) {
-      labels += `<text class="t2" x="${x}" y="44" font-size="9">${MONTHS[month]}</text>`;
-    }
-    lastMonth = month;
-
-    wk.days.forEach((d) => {
-      const row = new Date(`${d.date}T00:00:00Z`).getUTCDay();
-      const y = top + row * step;
-      const tip = `${d.count} contribution${d.count === 1 ? '' : 's'} on ${longDate(d.date)}`;
-      squares +=
-        `<rect class="l${level(d.count)}" x="${x}" y="${y}" width="${cell}" height="${cell}" rx="2">` +
-        `<title>${esc(tip)}</title></rect>`;
+  const months = [];
+  for (let i = count - 1; i >= 0; i -= 1) {
+    const at = new Date(Date.UTC(year, month - i, 1));
+    months.push({
+      label: MONTHS[at.getUTCMonth()],
+      year: at.getUTCFullYear(),
+      key: `${at.getUTCFullYear()}-${String(at.getUTCMonth() + 1).padStart(2, '0')}`,
+      total: 0,
+      activeDays: 0,
+      days: 0,
     });
-  });
+  }
+  const byKey = new Map(months.map((b) => [b.key, b]));
+  for (const d of inWindow) {
+    const bucket = byKey.get(d.date.slice(0, 7));
+    if (!bucket) continue;
+    bucket.total += d.count;
+    bucket.days += 1;
+    if (d.count > 0) bucket.activeDays += 1;
+  }
 
-  let weekdays = '';
-  [1, 3, 5].forEach((row) => {
-    weekdays += `<text class="t2" x="${pad}" y="${top + row * step + 8}" font-size="9">${WEEKDAYS[row]}</text>`;
-  });
+  const total = inWindow.reduce((sum, d) => sum + d.count, 0);
+  const activeDays = inWindow.filter((d) => d.count > 0).length;
+  return {
+    months,
+    days: inWindow,
+    total,
+    activePct: inWindow.length ? Math.round((activeDays / inWindow.length) * 100) : 0,
+  };
+}
 
-  const textY = h - 22;
-  const legendW = LEVELS * 12 - 3;
-  const legendX = w - 14 - 22 - 4 - legendW;
-  const legend = Array.from(
-    { length: LEVELS },
-    (_, i) => `<rect class="l${i}" x="${legendX + i * 12}" y="${h - 30}" width="9" height="9" rx="2"/>`
-  ).join('');
-  const legendText =
-    `<text class="t2" x="${legendX - 6}" y="${textY}" font-size="9" text-anchor="end">Less</text>` +
-    `<text class="t2" x="${legendX + legendW + 4}" y="${textY}" font-size="9">More</text>`;
+function activityCard(months, { currentStreak, longestStreak, total, activePct }) {
+  // Rendered 1:1 in the README, so both cards keep the same height by construction.
+  const w = 420;
+  const h = 180;
+  const pad = 22;
+  const base = 127;
+  const top = 60;
+  const plotW = w - pad * 2;
+  const slot = plotW / months.length;
+  const barW = 34;
+  const max = Math.max(1, ...months.map((m) => m.total));
+
+  const bars = months
+    .map((m, i) => {
+      const cx = pad + slot * (i + 0.5);
+      const height = m.total === 0 ? 2 : Math.max(3, Math.round((m.total / max) * (base - top)));
+      const x = (cx - barW / 2).toFixed(1);
+      const y = base - height;
+      const tip =
+        `${m.total} contribution${m.total === 1 ? '' : 's'} in ${m.label} ${m.year} · ` +
+        `${m.activeDays} active day${m.activeDays === 1 ? '' : 's'} of ${m.days}`;
+      return [
+        `<rect class="${m.total === 0 ? 'l0' : 'l3'}" x="${x}" y="${y}" width="${barW}" height="${height}" rx="3">` +
+        `<title>${esc(tip)}</title></rect>`,
+        `<text class="t1" x="${cx.toFixed(1)}" y="${y - 6}" font-size="9" text-anchor="middle">${m.total}</text>`,
+        `<text class="t2" x="${cx.toFixed(1)}" y="${base + 14}" font-size="9" text-anchor="middle">${m.label}</text>`,
+      ].join('');
+    })
+    .join('');
+
+  const axis = `<rect class="l0" x="${pad}" y="${base}" width="${plotW}" height="1"/>`;
 
   const streak =
-    `<text class="t2" x="22" y="${textY}" font-size="11">` +
+    `<text class="t2" x="22" y="${h - 22}" font-size="11">` +
     `Current streak <tspan class="t1" font-weight="600">${num(currentStreak)}d</tspan>` +
     ` &#183; Longest <tspan class="t1" font-weight="600">${num(longestStreak)}d</tspan>` +
+    ` &#183; <tspan class="t1" font-weight="600">${num(activePct)}%</tspan> active days` +
     `</text>`;
 
   const head =
     `<text class="t1" x="22" y="26" font-size="13" font-weight="600">Contribution activity` +
-    `<tspan class="t2" font-weight="400"> &#183; last 12 months</tspan></text>` +
-    `<text class="t2" x="${w - 14}" y="26" font-size="11" text-anchor="end">${num(totalContributions)} contributions</text>`;
+    `<tspan class="t2" font-weight="400"> &#183; last ${MONTH_WINDOW} months</tspan></text>` +
+    `<text class="t2" x="${w - pad}" y="26" font-size="11" text-anchor="end">${num(total)} contributions</text>`;
 
-  return card(w, h, head + labels + weekdays + squares + streak + legendText + legend);
+  return card(w, h, head + bars + axis + streak);
 }
 
-function streaksFrom(weeks) {
-  const days = weeks.flatMap((wk) => wk.days);
+function streaksFrom(days) {
   let current = 0;
   for (let i = days.length - 1; i >= 0; i -= 1) {
     if (days[i].count > 0) current += 1;
@@ -285,12 +301,17 @@ async function main() {
     .slice(0, 5);
 
   const calendar = contrib.user.contributionsCollection.contributionCalendar;
-  const weeks = calendar.weeks.map((wk) => ({ days: wk.contributionDays.map((d) => ({ count: d.contributionCount, date: d.date })) }));
+  const days = calendar.weeks
+    .flatMap((wk) => wk.contributionDays.map((d) => ({ count: d.contributionCount, date: d.date })))
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  const activity = recentActivity(days, MONTH_WINDOW);
 
   const cards = {
-    'activity.svg': activityCard(weeks, {
-      ...streaksFrom(weeks),
-      totalContributions: calendar.totalContributions,
+    'activity.svg': activityCard(activity.months, {
+      ...streaksFrom(activity.days),
+      total: activity.total,
+      activePct: activity.activePct,
     }),
     'languages.svg': languagesCard(langs),
   };
@@ -302,7 +323,7 @@ async function main() {
   }
   console.log(
     `@${username}: ${own.length} repos, ${stars} stars, ` +
-      `${calendar.totalContributions} contributions in the last year, ` +
+      `${activity.total} contributions in the last ${MONTH_WINDOW} months, ` +
       `top languages: ${langs.map((l) => l.name).join(', ') || 'none'}`
   );
 }
