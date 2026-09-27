@@ -61,8 +61,8 @@ networking, systems and automating whatever can be automated.
 ## 📊 Activity
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/RacoonByte01/RacoonByte01/stats-data/cards/activity.svg" width="580" alt="Contribution activity over the last 12 months">
-  <img src="https://raw.githubusercontent.com/RacoonByte01/RacoonByte01/stats-data/cards/languages.svg" width="300" alt="Most used languages">
+  <img src="https://raw.githubusercontent.com/RacoonByte01/RacoonByte01/main/cards/activity.svg" width="580" alt="Contribution activity over the last 12 months">
+  <img src="https://raw.githubusercontent.com/RacoonByte01/RacoonByte01/main/cards/languages.svg" width="300" alt="Most used languages">
 </div>
 
 ## 📫 Contact
