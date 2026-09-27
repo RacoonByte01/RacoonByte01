@@ -1,0 +1,62 @@
+name: Update profile stats
+
+# Renders cards/activity.svg and cards/languages.svg and publishes them on the
+# `stats-data` branch, which the README reads from raw.githubusercontent.com.
+# No third-party card service involved, so nothing here can break on someone else's outage.
+on:
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: profile-stats
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate cards
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          STATS_USERNAME: RacoonByte01
+          OUT_DIR: run/cards
+        run: node .github/scripts/generate-stats.mjs
+
+      - name: Publish to stats-data
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          if git ls-remote --exit-code --heads origin stats-data >/dev/null 2>&1; then
+            git fetch --depth 1 origin stats-data
+            git checkout -B stats-data FETCH_HEAD
+          else
+            git checkout --orphan stats-data
+            git rm -r -q --cached .
+          fi
+
+          mkdir -p cards
+          cp run/cards/*.svg cards/
+          git add cards
+          if git diff --cached --quiet; then
+            echo 'cards are already up to date'
+          else
+            git commit -m 'chore(stats): update profile cards'
+            git push origin HEAD:refs/heads/stats-data
+          fi

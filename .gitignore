@@ -1,0 +1,5 @@
+# Generated locally by .github/scripts/generate-stats.mjs
+# The published copies live on the stats-data branch.
+cards/
+run/
+node_modules/

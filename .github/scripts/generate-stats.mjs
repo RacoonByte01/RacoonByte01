@@ -1,0 +1,271 @@
+#!/usr/bin/env node
+// Self-hosted profile stats. Renders SVG cards from the GitHub API only,
+// so the README has zero third-party image dependencies.
+// Run locally:  GITHUB_TOKEN=... node .github/scripts/generate-stats.mjs
+
+import { mkdir, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+
+const API = 'https://api.github.com';
+const token = process.env.GITHUB_TOKEN || process.env.STATS_TOKEN || '';
+const [owner] = (process.env.GITHUB_REPOSITORY || 'RacoonByte01/RacoonByte01').split('/');
+const username = process.env.STATS_USERNAME || owner;
+const outDir = process.env.OUT_DIR || 'cards';
+
+const HEADERS = {
+  Accept: 'application/vnd.github+json',
+  'X-GitHub-Api-Version': '2022-11-28',
+  'User-Agent': 'profile-stats-generator',
+  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+};
+
+const C = {
+  bg: '#0d1117',
+  border: '#30363d',
+  text: '#e6edf3',
+  muted: '#8b949e',
+  bar: '#21262d',
+  levels: ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'],
+};
+
+const FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif";
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+const LANG_COLORS = {
+  c: '#555555',
+  'c++': '#f34b7d',
+  'c#': '#178600',
+  css: '#563d7c',
+  dockerfile: '#384d54',
+  go: '#00add8',
+  html: '#e34c26',
+  java: '#b07219',
+  javascript: '#f1e05a',
+  json: '#cbcb41',
+  kotlin: '#a97bff',
+  lua: '#000080',
+  markdown: '#083fa1',
+  php: '#4f5d95',
+  python: '#3572a5',
+  rust: '#dea584',
+  shell: '#89e051',
+  sql: '#e38c00',
+  typescript: '#3178c6',
+  vimscript: '#199f4b',
+  yaml: '#cb171e',
+};
+
+const esc = (s) =>
+  String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+const num = (n) => Number(n || 0).toLocaleString('en-US');
+
+const card = (w, h, body) =>
+  [
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" font-family="${FONT}">`,
+    `<rect width="${w}" height="${h}" rx="10" fill="${C.bg}"/>`,
+    `<rect x="0.5" y="0.5" width="${w - 1}" height="${h - 1}" rx="10" fill="none" stroke="${C.border}"/>`,
+    body,
+    '</svg>',
+  ].join('');
+
+async function rest(path) {
+  const res = await fetch(API + path, { headers: HEADERS });
+  if (!res.ok) throw new Error(`GET ${path} -> ${res.status} ${res.statusText}`);
+  return res.json();
+}
+
+async function graphql(query, variables) {
+  const res = await fetch(`${API}/graphql`, {
+    method: 'POST',
+    headers: { ...HEADERS, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query, variables }),
+  });
+  if (!res.ok) throw new Error(`POST /graphql -> ${res.status} ${res.statusText}`);
+  const json = await res.json();
+  if (json.errors) throw new Error(`GraphQL: ${json.errors.map((e) => e.message).join(' | ')}`);
+  return json.data;
+}
+
+function languagesCard(langs) {
+  const w = 340;
+  const rowH = 36;
+  const top = 52;
+  const h = top + langs.length * rowH + 12;
+  const barW = 296;
+
+  const total = langs.reduce((acc, l) => acc + l.bytes, 0) || 1;
+  const max = langs[0]?.bytes || 1;
+
+  const rows = langs
+    .map((l, i) => {
+      const y = top + i * rowH;
+      const pct = (l.bytes / total) * 100;
+      const wBar = Math.max(3, (l.bytes / max) * barW);
+      const color = LANG_COLORS[l.name.toLowerCase()] || '#8b949e';
+      return [
+        `<circle cx="26" cy="${y - 4}" r="5" fill="${color}"/>`,
+        `<text x="38" y="${y}" font-size="12" fill="${C.text}">${esc(l.name)}</text>`,
+        `<text x="316" y="${y}" font-size="11" fill="${C.muted}" text-anchor="end">${pct.toFixed(1)}%</text>`,
+        `<rect x="22" y="${y + 8}" width="${barW}" height="6" rx="3" fill="${C.bar}"/>`,
+        `<rect x="22" y="${y + 8}" width="${wBar.toFixed(1)}" height="6" rx="3" fill="${color}"/>`,
+      ].join('');
+    })
+    .join('');
+
+  const head = `<text x="22" y="30" font-size="13" font-weight="600" fill="${C.text}">Top languages</text>`;
+  const empty = `<text x="22" y="60" font-size="11" fill="${C.muted}">No language data yet</text>`;
+  return card(w, h, head + (langs.length ? rows : empty));
+}
+
+function activityCard(weeks, { currentStreak, longestStreak }) {
+  const cell = 9;
+  const step = 11;
+  const left = 40;
+  const top = 38;
+  const gridH = 7 * step;
+  const firstWeekday = new Date(`${weeks[0].days[0].date}T00:00:00Z`).getUTCDay();
+  const cols = firstWeekday + weeks.length;
+  const w = left + cols * step + 8;
+  const h = top + gridH + 34;
+
+  const counts = weeks.flatMap((wk) => wk.days.map((d) => d.count));
+  const max = Math.max(1, ...counts);
+  const level = (c) => (c === 0 ? 0 : Math.min(4, Math.ceil((c / max) * 4)));
+
+  let lastMonth = -1;
+  let squares = '';
+  let labels = '';
+
+  weeks.forEach((wk, wi) => {
+    const col = firstWeekday + wi;
+    const x = left + col * step;
+    const month = new Date(`${wk.days[0].date}T00:00:00Z`).getUTCMonth();
+    if (wi > 0 && month !== lastMonth) {
+      labels += `<text x="${x}" y="30" font-size="9" fill="${C.muted}">${MONTHS[month]}</text>`;
+    }
+    lastMonth = month;
+
+    wk.days.forEach((d) => {
+      const row = new Date(`${d.date}T00:00:00Z`).getUTCDay();
+      const y = top + row * step;
+      squares += `<rect x="${x}" y="${y}" width="${cell}" height="${cell}" rx="2" fill="${C.levels[level(d.count)]}"/>`;
+    });
+  });
+
+  const legendX = w - 8 - 32 - C.levels.length * 12;
+  const legend = C.levels
+    .map((color, i) => `<rect x="${legendX + i * 12}" y="${h - 17}" width="9" height="9" rx="2" fill="${color}"/>`)
+    .join('');
+  const legendText =
+    `<text x="${legendX - 6}" y="${h - 9}" font-size="9" fill="${C.muted}" text-anchor="end">Less</text>` +
+    `<text x="${legendX + C.levels.length * 12 + 4}" y="${h - 9}" font-size="9" fill="${C.muted}">More</text>`;
+
+  const textY = h - 12;
+  const streak =
+    `<text x="22" y="${textY}" font-size="11" fill="${C.muted}">` +
+    `Current streak <tspan fill="${C.text}" font-weight="600">${num(currentStreak)}d</tspan>` +
+    ` &#183; Longest <tspan fill="${C.text}" font-weight="600">${num(longestStreak)}d</tspan>` +
+    `</text>`;
+
+  const head =
+    `<text x="22" y="16" font-size="13" font-weight="600" fill="${C.text}">Contribution activity` +
+    `<tspan fill="${C.muted}" font-weight="400"> &#183; last 12 months</tspan></text>`;
+
+  return card(w, h, head + labels + squares + streak + legendText + legend);
+}
+
+function streaksFrom(weeks) {
+  const days = weeks.flatMap((wk) => wk.days);
+  let current = 0;
+  for (let i = days.length - 1; i >= 0; i -= 1) {
+    if (days[i].count > 0) current += 1;
+    else if (i === days.length - 1) continue;
+    else break;
+  }
+  let longest = 0;
+  let run = 0;
+  for (const d of days) {
+    if (d.count > 0) {
+      run += 1;
+      if (run > longest) longest = run;
+    } else {
+      run = 0;
+    }
+  }
+  return { currentStreak: current, longestStreak: longest };
+}
+
+async function fetchAllRepos() {
+  const repos = [];
+  for (let page = 1; ; page += 1) {
+    const batch = await rest(`/users/${username}/repos?per_page=100&type=owner&sort=updated&page=${page}`);
+    repos.push(...batch);
+    if (batch.length < 100) return repos;
+  }
+}
+
+const CONTRIB_QUERY = `
+  query ($login: String!) {
+    user(login: $login) {
+      contributionsCollection {
+        contributionCalendar {
+          totalContributions
+          weeks {
+            contributionDays {
+              contributionCount
+              date
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+async function main() {
+  if (!token) {
+    throw new Error('GITHUB_TOKEN is required: the GraphQL contribution calendar is only available to authenticated requests.');
+  }
+
+  const [contrib, repos] = await Promise.all([graphql(CONTRIB_QUERY, { login: username }), fetchAllRepos()]);
+
+  const own = repos.filter((r) => !r.fork);
+  const stars = own.reduce((acc, r) => acc + r.stargazers_count, 0);
+
+  const totals = new Map();
+  for (const repo of own.filter((r) => r.size > 0)) {
+    const bytes = await rest(`/repos/${repo.owner.login}/${repo.name}/languages`);
+    for (const [name, size] of Object.entries(bytes)) {
+      totals.set(name, (totals.get(name) || 0) + size);
+    }
+  }
+  const langs = [...totals.entries()]
+    .map(([name, bytes]) => ({ name, bytes }))
+    .sort((a, b) => b.bytes - a.bytes)
+    .slice(0, 6);
+
+  const calendar = contrib.user.contributionsCollection.contributionCalendar;
+  const weeks = calendar.weeks.map((wk) => ({ days: wk.contributionDays.map((d) => ({ count: d.contributionCount, date: d.date })) }));
+
+  const cards = {
+    'activity.svg': activityCard(weeks, streaksFrom(weeks)),
+    'languages.svg': languagesCard(langs),
+  };
+
+  await mkdir(outDir, { recursive: true });
+  for (const [file, svg] of Object.entries(cards)) {
+    await writeFile(join(outDir, file), `${svg}\n`, 'utf8');
+    console.log(`wrote ${join(outDir, file)} (${svg.length} bytes)`);
+  }
+  console.log(
+    `@${username}: ${own.length} repos, ${stars} stars, ` +
+      `${calendar.totalContributions} contributions in the last year, ` +
+      `top languages: ${langs.map((l) => l.name).join(', ') || 'none'}`
+  );
+}
+
+main().catch((err) => {
+  console.error(`stats generation failed: ${err.message}`);
+  process.exit(1);
+});
