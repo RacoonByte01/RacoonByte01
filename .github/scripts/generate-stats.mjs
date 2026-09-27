@@ -19,17 +19,36 @@ const HEADERS = {
   ...(token ? { Authorization: `Bearer ${token}` } : {}),
 };
 
-const C = {
-  bg: '#0d1117',
-  border: '#30363d',
-  text: '#e6edf3',
-  muted: '#8b949e',
-  bar: '#21262d',
-  levels: ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'],
-};
+// Colours live in a <style> block so the cards follow the reader's GitHub theme
+// instead of staying dark on a light page. Language dots keep their brand colours.
+const STYLE = `<style>
+.bg{fill:#ffffff}
+.bd{stroke:#d0d7de}
+.t1{fill:#24292f}
+.t2{fill:#57606a}
+.track{fill:#eaeef2}
+.l0{fill:#ebedf0}
+.l1{fill:#9be9a8}
+.l2{fill:#40c463}
+.l3{fill:#30a14e}
+.l4{fill:#216e39}
+@media (prefers-color-scheme: dark){
+.bg{fill:#0d1117}
+.bd{stroke:#30363d}
+.t1{fill:#e6edf3}
+.t2{fill:#8b949e}
+.track{fill:#21262d}
+.l0{fill:#161b22}
+.l1{fill:#0e4429}
+.l2{fill:#006d32}
+.l3{fill:#26a641}
+.l4{fill:#39d353}
+}</style>`;
 
+const LEVELS = 5;
 const FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif";
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const LANG_COLORS = {
   c: '#555555',
@@ -60,11 +79,17 @@ const esc = (s) =>
 
 const num = (n) => Number(n || 0).toLocaleString('en-US');
 
+const longDate = (iso) => {
+  const [y, m, d] = iso.split('-').map(Number);
+  return `${WEEKDAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()]} ${d} ${MONTHS[m - 1]} ${y}`;
+};
+
 const card = (w, h, body) =>
   [
     `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" font-family="${FONT}">`,
-    `<rect width="${w}" height="${h}" rx="10" fill="${C.bg}"/>`,
-    `<rect x="0.5" y="0.5" width="${w - 1}" height="${h - 1}" rx="10" fill="none" stroke="${C.border}"/>`,
+    STYLE,
+    `<rect class="bg" width="${w}" height="${h}" rx="10"/>`,
+    `<rect class="bd" x="0.5" y="0.5" width="${w - 1}" height="${h - 1}" rx="10" fill="none"/>`,
     body,
     '</svg>',
   ].join('');
@@ -88,11 +113,14 @@ async function graphql(query, variables) {
 }
 
 function languagesCard(langs) {
-  const w = 340;
-  const rowH = 36;
-  const top = 52;
-  const h = top + langs.length * rowH + 12;
-  const barW = 296;
+  // 333 x 180 keeps the same rendering scale as the activity card at the
+  // widths the README uses, so both rows come out the same height.
+  const w = 333;
+  const h = 180;
+  const rowH = 26;
+  const top = 40;
+  const barX = 22;
+  const barW = w - barX * 2;
 
   const total = langs.reduce((acc, l) => acc + l.bytes, 0) || 1;
   const max = langs[0]?.bytes || 1;
@@ -104,30 +132,30 @@ function languagesCard(langs) {
       const wBar = Math.max(3, (l.bytes / max) * barW);
       const color = LANG_COLORS[l.name.toLowerCase()] || '#8b949e';
       return [
-        `<circle cx="26" cy="${y - 4}" r="5" fill="${color}"/>`,
-        `<text x="38" y="${y}" font-size="12" fill="${C.text}">${esc(l.name)}</text>`,
-        `<text x="316" y="${y}" font-size="11" fill="${C.muted}" text-anchor="end">${pct.toFixed(1)}%</text>`,
-        `<rect x="22" y="${y + 8}" width="${barW}" height="6" rx="3" fill="${C.bar}"/>`,
-        `<rect x="22" y="${y + 8}" width="${wBar.toFixed(1)}" height="6" rx="3" fill="${color}"/>`,
+        `<circle cx="26" cy="${y + 6}" r="5" fill="${color}"/>`,
+        `<text class="t1" x="38" y="${y + 11}" font-size="12">${esc(l.name)}</text>`,
+        `<text class="t2" x="${w - 22}" y="${y + 11}" font-size="11" text-anchor="end">${pct.toFixed(1)}%</text>`,
+        `<rect class="track" x="${barX}" y="${y + 17}" width="${barW}" height="6" rx="3"/>`,
+        `<rect x="${barX}" y="${y + 17}" width="${wBar.toFixed(1)}" height="6" rx="3" fill="${color}"/>`,
       ].join('');
     })
     .join('');
 
-  const head = `<text x="22" y="30" font-size="13" font-weight="600" fill="${C.text}">Top languages</text>`;
-  const empty = `<text x="22" y="60" font-size="11" fill="${C.muted}">No language data yet</text>`;
+  const head = `<text class="t1" x="22" y="26" font-size="13" font-weight="600">Top languages</text>`;
+  const empty = `<text class="t2" x="22" y="60" font-size="11">No language data yet</text>`;
   return card(w, h, head + (langs.length ? rows : empty));
 }
 
-function activityCard(weeks, { currentStreak, longestStreak }) {
+function activityCard(weeks, { currentStreak, longestStreak, totalContributions }) {
   const cell = 9;
   const step = 11;
-  const left = 40;
-  const top = 38;
-  const gridH = 7 * step;
+  const pad = 22;
+  const left = pad + 26; // gutter for the Mon/Wed/Fri labels
+  const top = 52;
+  const h = 180;
   const firstWeekday = new Date(`${weeks[0].days[0].date}T00:00:00Z`).getUTCDay();
   const cols = firstWeekday + weeks.length;
-  const w = left + cols * step + 8;
-  const h = top + gridH + 34;
+  const w = left + (cols - 1) * step + cell + 14;
 
   const counts = weeks.flatMap((wk) => wk.days.map((d) => d.count));
   const max = Math.max(1, ...counts);
@@ -142,37 +170,48 @@ function activityCard(weeks, { currentStreak, longestStreak }) {
     const x = left + col * step;
     const month = new Date(`${wk.days[0].date}T00:00:00Z`).getUTCMonth();
     if (wi > 0 && month !== lastMonth) {
-      labels += `<text x="${x}" y="30" font-size="9" fill="${C.muted}">${MONTHS[month]}</text>`;
+      labels += `<text class="t2" x="${x}" y="44" font-size="9">${MONTHS[month]}</text>`;
     }
     lastMonth = month;
 
     wk.days.forEach((d) => {
       const row = new Date(`${d.date}T00:00:00Z`).getUTCDay();
       const y = top + row * step;
-      squares += `<rect x="${x}" y="${y}" width="${cell}" height="${cell}" rx="2" fill="${C.levels[level(d.count)]}"/>`;
+      const tip = `${d.count} contribution${d.count === 1 ? '' : 's'} on ${longDate(d.date)}`;
+      squares +=
+        `<rect class="l${level(d.count)}" x="${x}" y="${y}" width="${cell}" height="${cell}" rx="2">` +
+        `<title>${esc(tip)}</title></rect>`;
     });
   });
 
-  const legendX = w - 8 - 32 - C.levels.length * 12;
-  const legend = C.levels
-    .map((color, i) => `<rect x="${legendX + i * 12}" y="${h - 17}" width="9" height="9" rx="2" fill="${color}"/>`)
-    .join('');
-  const legendText =
-    `<text x="${legendX - 6}" y="${h - 9}" font-size="9" fill="${C.muted}" text-anchor="end">Less</text>` +
-    `<text x="${legendX + C.levels.length * 12 + 4}" y="${h - 9}" font-size="9" fill="${C.muted}">More</text>`;
+  let weekdays = '';
+  [1, 3, 5].forEach((row) => {
+    weekdays += `<text class="t2" x="${pad}" y="${top + row * step + 8}" font-size="9">${WEEKDAYS[row]}</text>`;
+  });
 
-  const textY = h - 12;
+  const textY = h - 22;
+  const legendW = LEVELS * 12 - 3;
+  const legendX = w - 14 - 22 - 4 - legendW;
+  const legend = Array.from(
+    { length: LEVELS },
+    (_, i) => `<rect class="l${i}" x="${legendX + i * 12}" y="${h - 30}" width="9" height="9" rx="2"/>`
+  ).join('');
+  const legendText =
+    `<text class="t2" x="${legendX - 6}" y="${textY}" font-size="9" text-anchor="end">Less</text>` +
+    `<text class="t2" x="${legendX + legendW + 4}" y="${textY}" font-size="9">More</text>`;
+
   const streak =
-    `<text x="22" y="${textY}" font-size="11" fill="${C.muted}">` +
-    `Current streak <tspan fill="${C.text}" font-weight="600">${num(currentStreak)}d</tspan>` +
-    ` &#183; Longest <tspan fill="${C.text}" font-weight="600">${num(longestStreak)}d</tspan>` +
+    `<text class="t2" x="22" y="${textY}" font-size="11">` +
+    `Current streak <tspan class="t1" font-weight="600">${num(currentStreak)}d</tspan>` +
+    ` &#183; Longest <tspan class="t1" font-weight="600">${num(longestStreak)}d</tspan>` +
     `</text>`;
 
   const head =
-    `<text x="22" y="16" font-size="13" font-weight="600" fill="${C.text}">Contribution activity` +
-    `<tspan fill="${C.muted}" font-weight="400"> &#183; last 12 months</tspan></text>`;
+    `<text class="t1" x="22" y="26" font-size="13" font-weight="600">Contribution activity` +
+    `<tspan class="t2" font-weight="400"> &#183; last 12 months</tspan></text>` +
+    `<text class="t2" x="${w - 14}" y="26" font-size="11" text-anchor="end">${num(totalContributions)} contributions</text>`;
 
-  return card(w, h, head + labels + squares + streak + legendText + legend);
+  return card(w, h, head + labels + weekdays + squares + streak + legendText + legend);
 }
 
 function streaksFrom(weeks) {
@@ -243,13 +282,16 @@ async function main() {
   const langs = [...totals.entries()]
     .map(([name, bytes]) => ({ name, bytes }))
     .sort((a, b) => b.bytes - a.bytes)
-    .slice(0, 6);
+    .slice(0, 5);
 
   const calendar = contrib.user.contributionsCollection.contributionCalendar;
   const weeks = calendar.weeks.map((wk) => ({ days: wk.contributionDays.map((d) => ({ count: d.contributionCount, date: d.date })) }));
 
   const cards = {
-    'activity.svg': activityCard(weeks, streaksFrom(weeks)),
+    'activity.svg': activityCard(weeks, {
+      ...streaksFrom(weeks),
+      totalContributions: calendar.totalContributions,
+    }),
     'languages.svg': languagesCard(langs),
   };
 
