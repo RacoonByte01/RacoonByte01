@@ -2,3 +2,4 @@
 # cards/ is committed on purpose: the README links to it.
 run/
 node_modules/
+.vscode
