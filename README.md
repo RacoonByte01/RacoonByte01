@@ -7,14 +7,14 @@ networking, systems and automating whatever can be automated.
 
 ### Studies
 
-- **DAM** — Multi-Platform Application Development
-- **CETI** — IT Environments
+- **DAM** - Multi-Platform Application Development
+- **CETI** - IT Environments
 
 ### Experience
 
-- **Developer · Madison** · Feb 2026 – present  
+- **Developer · Madison** · Feb 2026 - present  
   Full-stack web development: WordPress, PHP, JavaScript and HTML on the front end, plus Python and database design.
-- **Developer · Shadow Digital** · Feb 2024 – Aug 2024  
+- **Developer · Shadow Digital** · Feb 2024 - Aug 2024  
   Projects across Python, Java, JavaScript, PHP (Laravel) and MySQL. Git and GitHub workflows, and API integration between systems.
 
 ## 🧰 Stack
@@ -35,6 +35,7 @@ networking, systems and automating whatever can be automated.
 
 [![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=flat-square&logo=laravel&logoColor=white)](https://laravel.com/)
 [![Hibernate](https://img.shields.io/badge/Hibernate-59666C?style=flat-square&logo=hibernate&logoColor=white)](https://hibernate.org/)
+[![Spring](https://img.shields.io/badge/Spring-6DB33F?style=flat-square&logo=spring&logoColor=white)](https://spring.io/)
 
 **Data**
 
