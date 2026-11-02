@@ -12,9 +12,9 @@ networking, systems and automating whatever can be automated.
 
 ### Experience
 
-- **Developer · Madison** · Feb 2026 - present  
-  Full-stack web development: WordPress, PHP, JavaScript and HTML on the front end, plus Python and database design.
-- **Developer · Shadow Digital** · Feb 2024 - Aug 2024  
+- **Developer · FullStack** · Feb 2026 - present  
+  Full-stack web development: WordPress, PHP, JavaScript, React HTML on the front end, plus Python and database design.
+- **Developer · Backend** · Feb 2024 - Aug 2024  
   Projects across Python, Java, JavaScript, PHP (Laravel) and MySQL. Git and GitHub workflows, and API integration between systems.
 
 ## 🧰 Stack
